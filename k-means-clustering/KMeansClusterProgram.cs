@@ -188,6 +188,7 @@ namespace k_means_clustering
             close file
             return result matrix
             */
+            int numDynRows = 0;
 
             //open the file specified
             System.IO.FileStream ifs = new System.IO.FileStream(dataFile, System.IO.FileMode.Open);

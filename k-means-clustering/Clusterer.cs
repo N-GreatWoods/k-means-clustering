@@ -100,7 +100,6 @@ namespace k_means_clustering
 
         /// <summary>
         /// Update each of the centroids so that they have associated data tuples
-        /// The average is obtained but im not quite sure for what yet or exactly how
         /// </summary>
         /// <param name="data"></param>
         private void UpdateCentroids(double[][] data)
@@ -129,6 +128,7 @@ namespace k_means_clustering
             {
                 int clusterID = _clustering[i];
                 for (int j = 0; j < data[i].Length; ++j)
+                    //add the data tuple to the value of a given clusterID
                     _centroids[clusterID][j] += data[i][j]; //accumulate sum
             }
 
@@ -136,6 +136,9 @@ namespace k_means_clustering
             //this gets us the average
             for (int k = 0; k < _centroids.Length; ++k)
                 for (int j = 0; j < _centroids[k].Length; ++j)
+                    //at a given cluster and data point, divide that by the number of nodes (tuples) already at that
+                    //same given cluster
+                    //the value of a centroid is the average of all its values
                     _centroids[k][j] /= clusterCounts[k]; //danger will robinson
                     //TODO: fatal divide / 0 error can occur if a cluster has no data tuples (more below)
                     //This can happen if at intial spawn a centroid has a tuple, but then during update
