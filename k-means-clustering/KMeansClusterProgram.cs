@@ -16,7 +16,7 @@ namespace k_means_clustering
             Console.WriteLine("\nDankNet K-Means Clustering Start\n");
 
             string dataFile = "F:\\Projects\\c_sharp\\InputData\\HeightWeight.txt";
-            double[][] rawData = LoadData(dataFile, 10, 2, ',');
+            double[][] rawData = LoadData(dataFile, ',');
 
             //double[][] rawData = new double[10][];
             //rawData[0] = new double[] { 73.0, 72.6 };
@@ -167,7 +167,7 @@ namespace k_means_clustering
         /// <param name="numCols"></param>
         /// <param name="delim"></param>
         /// <returns></returns>
-        static double[][] LoadData(string dataFile, int numRows, int numCols, char delim)
+        static double[][] LoadData(string dataFile, char delim)
         {
 
             /*
@@ -188,7 +188,19 @@ namespace k_means_clustering
             close file
             return result matrix
             */
+
+            string preLine = "";
             int numDynRows = 0;
+            System.IO.FileStream ifsPre = new System.IO.FileStream(dataFile, System.IO.FileMode.Open);
+            System.IO.StreamReader srPre = new System.IO.StreamReader(ifsPre);
+            while ((preLine = srPre.ReadLine()) != null)
+                ++numDynRows;
+
+            Console.Write(numDynRows.ToString() + " NUMBER OF ROWS FOUND!!\n");
+            //Close the stream reader
+            srPre.Close();
+            //Close the FS
+            ifsPre.Close();
 
             //open the file specified
             System.IO.FileStream ifs = new System.IO.FileStream(dataFile, System.IO.FileMode.Open);
@@ -200,14 +212,18 @@ namespace k_means_clustering
             string[] tokens = null;
             //init local var i
             int i = 0;
+            //init local var for num of cols
+            int numCols = 0;
             //init local var result with known rows
-            double[][] result = new double[numRows][];
+            double[][] result = new double[numDynRows][];
             //while the lines being read are not null
             while((line = sr.ReadLine()) != null)
             {
                 //Start storing the results where this index of result is the values of the line
-                result[i] = new double[numCols];
+                
                 tokens = line.Split(delim);
+                numCols = tokens.Length;
+                result[i] = new double[numCols];
                 for (int j = 0; j < numCols; ++j)
                 {
                     //for the result line, set j to the values
