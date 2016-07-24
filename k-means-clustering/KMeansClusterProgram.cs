@@ -34,7 +34,7 @@ namespace k_means_clustering
             Console.WriteLine("Raw unclustered data:\n");
             Console.WriteLine(" ID Height (in.) Weight (kg.)");
             Console.WriteLine("---------------------------------");
-            ShowData(rawData, 1, true, false);
+            ShowData(rawData, 1, true, true);
 
             /* INIT CLUSTERING */
             int numClusters = 3;

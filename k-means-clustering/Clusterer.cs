@@ -10,8 +10,8 @@ namespace k_means_clustering
     {
 
         private int _numClusters;       //number of clusters
-        private int[] _clustering;      //used to assign which cluster a data element belongs to, will be between 0 and _numClusters
-        private double[][] _centroids;  //the centroid for each cluster
+        private int[] _clustering;      // index = a tuple and value = cluster ID
+        private double[][] _centroids;  //the centroid (mean (vector)) for each cluster
         private static Random _rnd;     //random for initialization
 
         #region Public Methods
@@ -98,7 +98,11 @@ namespace k_means_clustering
             }
         }
 
-        
+        /// <summary>
+        /// Update each of the centroids so that they have associated data tuples
+        /// The average is obtained but im not quite sure for what yet or exactly how
+        /// </summary>
+        /// <param name="data"></param>
         private void UpdateCentroids(double[][] data)
         {
             /*start by computing the current number of data tuples
@@ -120,7 +124,7 @@ namespace k_means_clustering
                 for (int j = 0; j < _centroids[k].Length; ++j)
                     _centroids[k][j] = 0.0;
 
-            //Accumulate the sums
+            //Accumulate the sums, add the data tuples to the centroids at a given clusterID
             for (int i = 0; i < data.Length; ++i)
             {
                 int clusterID = _clustering[i];
@@ -129,6 +133,7 @@ namespace k_means_clustering
             }
 
             //divide the accumulated sums by the appropriate cluster count
+            //this gets us the average
             for (int k = 0; k < _centroids.Length; ++k)
                 for (int j = 0; j < _centroids[k].Length; ++j)
                     _centroids[k][j] /= clusterCounts[k]; //danger will robinson
@@ -138,17 +143,25 @@ namespace k_means_clustering
                     //for a solution. pp. 27
         }
 
+        /// <summary>
+        /// Method to "(re)assign each tuple to a cluster (closest centroid)
+        /// returns false if no tuple assignment change (meaning we're done) OR
+        /// if the reassignment would result in a clustering where
+        /// one or more clusters have not tuple (data points)
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         private bool UpdateClustering(double[][] data)
         {
-            //has a value of the clustering changes?
+            //has any tuple changed clusters?
             bool changed = false;
-            //the new clustering array allocated based on the originals length
+            //the new (proposed) clustering array allocated based on the originals length
             int[] newClustering = new int[_clustering.Length];
             //copy the arrays
             Array.Copy(_clustering, newClustering, _clustering.Length);
             //hold the distance from a given data tuple to each centroid
             //e.g. {4.0, 1.5, 2.8} given a tuple where 4 is dist to cluster 0, 1.5 is dist to cluster 1, and 2.8 is dist to cluster 2
-            double[] distances = new double[_numClusters];
+            double[] distances = new double[_numClusters]; // "from tuple to centroids"
 
             //For each tuple of data
             for(int i = 0; i< data.Length; ++i)
@@ -157,6 +170,7 @@ namespace k_means_clustering
                 for (int k = 0; k < _numClusters; ++k)
                     distances[k] = Distance(data[i], _centroids[k]);
 
+                //"find closest centroid"
                 int newClusterID = MinIndex(distances);
 
                 if (newClusterID != newClustering[i])
@@ -194,6 +208,7 @@ namespace k_means_clustering
 
             //All is well, copy the new clustering array to the current
             Array.Copy(newClustering, this._clustering, newClustering.Length);
+            //"Good clustering and at least one change"
             return true;
 
         }
