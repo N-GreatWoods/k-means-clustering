@@ -45,15 +45,21 @@ namespace k_means_clustering
             Clusterer c = new Clusterer(numClusters);
             //give the matrix of data to the clusterer
             //returns int array where array index value is the index of a data item, and the array cell value is a cluster ID
+            //the array indices (0, 1, 2, .. 9) represent indices of the data items
+            //the cell values {2, 0, 1 .. 2} represent the cluster ids
+            //Could be done many diff ways, and I quote:
+            //"For example, you could use an array of List objects, where each List
+            //collection holds the indices of data items that belong to the same
+            //cluster." pp 21.
             int[] clustering = c.Cluster(rawData);
             Console.WriteLine("Clustering Complete!\n");
 
             /* SHOWING FINAL DATA */
             Console.WriteLine("Final clustering in internal form:\n");
-            //ShowVector(clustering, true);
+            ShowVector(clustering, true);
 
             Console.WriteLine("Raw data by cluster:\n");
-            //ShowClustered(rawData, clustering, numClusters, 1);
+            ShowClustered(rawData, clustering, numClusters, 1);
 
             Console.WriteLine("\nEnd k-means clustering demo\n");
             Console.ReadLine();
@@ -152,8 +158,37 @@ namespace k_means_clustering
             } // k - nice i like this notation!
         }
 
+        /// <summary>
+        /// Load data from a file
+        /// TODO: Update to dynamically determine the number of rows
+        /// </summary>
+        /// <param name="dataFile"></param>
+        /// <param name="numRows"></param>
+        /// <param name="numCols"></param>
+        /// <param name="delim"></param>
+        /// <returns></returns>
         static double[][] LoadData(string dataFile, int numRows, int numCols, char delim)
         {
+
+            /*
+             * Dynamic row/column reading pseudo code
+            numRows := 0
+            open file
+            while not EOF
+            numRows := numRows + 1
+            end loop
+            close file
+            allocate result array with numRows
+            open file
+            while not EOF
+            read and parse line with numCols
+            allocate curr row of array with numCols
+            store line
+            end loop
+            close file
+            return result matrix
+            */
+
             //open the file specified
             System.IO.FileStream ifs = new System.IO.FileStream(dataFile, System.IO.FileMode.Open);
             //Read the file as a stream
